@@ -1,0 +1,42 @@
+machine(MachineType:L2Cache, "Synfull_standalone L2 Cache")
+    : Sequencer * sequencer;
+      Cycles l2_request_latency := 2;
+      Cycles l2_response_latency := 2;
+      Cycles to_dir_latency := 2;
+      // NETWORK BUFFERS
+      MessageBuffer * DirRequestFromL2Cache, network = "To", virtual_network="0".
+        vnet_type="request";  // this L2 bank -> Memory
+      
+      MessageBuffer * DirForwardFromL2Cache, network = "To", virtual_network="1".
+        vnet_type="forward";  // this L2 bank -> Memory
+
+      MessageBuffer * DirResponseFromL2Cache, network = "To", virtual_network="2".
+        vnet_type="response";  // this L2 bank -> Memory
+
+      MessageBuffer * RequestToL2Cache, network = "From", virtual_network="0".
+        vnet_type="request";  // this Memory -> L2 bank
+
+      MessageBuffer * UnblockToL2Cache, network = "From", virtual_network="1".
+        vnet_type="unblock";  // this Memory -> L2 bank
+
+      MessageBuffer * ResponseToL2Cache, network = "From", virtual_network="2".
+        vnet_type="response";  // this Memory -> L2 bank
+{
+  // STATES
+  state_declaration(State, desc="Cache states", default="L2Cache_State-I") {
+    I,  AccessPermission:Invalid, desc="Not Present/Invalid";
+  }
+
+  enumeration(Event, desc="Cache events") {
+    // From processor
+    L2_Request,    desc="Request from Synfull_standalone";
+    Forward,    desc="Forward from Synfull_standalone";
+    Response,   desc="Response from Synfull_standalone";
+  }
+
+
+
+
+}
+
+      

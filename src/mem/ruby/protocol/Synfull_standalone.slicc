@@ -1,0 +1,5 @@
+protocol "Synfull_standalone";
+include "RubySlicc_interfaces.slicc";
+include "Synfull_standalone-msg.sm";
+include "Synfull_standalone-cache.sm";
+include "Synfull_standalone-dir.sm";

@@ -1,0 +1,60 @@
+enumeration(CoherenceRequestType, desc="...") {
+    DMA_READ,   desc="DMA Read";
+    DMA_WRITE,  desc="DMA WRITE";
+    //todo: PUTC & PUTD
+    //assume that: PUTC==PUTX
+    //             PUTD==WB_ACK
+    PUTX,       desc="Replacement message";
+    WB_ACK,     desc="Writeback Ack";
+    INV,        desc="INValidate";
+}
+
+enumeration(CoherenceResponseType, desc="...") {
+    ACK,        desc="Generic invalidate Ack";
+    WB_ACK,     desc="Writeback Ack";
+    DATA,       desc="Data block";
+    UNBLOCK,    desc="Unblock";
+}
+
+structure(RequestMsg, desc="...", interface="Message") {
+    Addr addr,                      desc="Physical address for this request";
+    CoherenceRequestType Type,      desc="Type of request (GetS, GetX, PutX, etc)";
+    MachineID Requestor,            desc="What component request";
+    NetDest Destination,            desc="Node to whom the data is sent";
+    DataBlock DataBlk,              desc="Data for the cache line";
+    MessageSizeType MessageSize,    desc="size category of the message";
+
+    bool functionalRead(Packet *pkt) {
+      if (Type == CoherenceRequestType:PUTX) {
+          return testAndRead(addr, DataBlk, pkt);
+      }
+
+      return false;
+    }
+
+    bool functionalWrite(Packet *pkt) {
+      return testAndWrite(addr, DataBlk, pkt);
+    }
+
+
+}
+
+structure(ResponseMsg, desc="...", interface="Message") {
+    Addr addr,                      desc="Physical address for this response";
+    CoherenceResponseType Type,     desc="Type of response (Ack, Data, etc)";
+    MachineID Sender,               desc="What component sent the data";
+    NetDest Destination,            desc="Node to whom the data is sent";
+    DataBlock DataBlk,              desc="Data for the cache line";
+    MessageSizeType MessageSize,    desc="size category of the message";
+
+    bool functionalRead(Packet *pkt) {
+      if(Type == CoherenceResponseType:DATA) {
+        return testAndRead(addr, DataBlk, pkt);
+      }
+      return false;
+    }
+
+    bool functionalWrite(Packet *pkt) {
+        return testAndWrite(addr, DataBlk, pkt);
+    }
+}

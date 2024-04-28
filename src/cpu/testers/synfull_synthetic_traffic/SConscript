@@ -1,0 +1,15 @@
+Import('*')
+
+if not env['CONF']['RUBY']:
+    Return()
+
+SimObject('SynfullSyntheticTraffic.py', sim_objects=['SynfullSyntheticTraffic'])
+
+Source('SynfullSyntheticTraffic.cc')
+Source('PacketQueue.cc')
+Source('MyRand.cc')
+Source('ModelRead.cc')
+Source('Messages.cc')
+Source('Global.cc')
+
+DebugFlag('SynfullSyntheticTraffic')
