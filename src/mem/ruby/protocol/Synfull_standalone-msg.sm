@@ -1,11 +1,8 @@
 enumeration(CoherenceRequestType, desc="...") {
-    DMA_READ,   desc="DMA Read";
-    DMA_WRITE,  desc="DMA WRITE";
-    //todo: PUTC & PUTD
-    //assume that: PUTC==PUTX
-    //             PUTD==WB_ACK
-    PUTX,       desc="Replacement message";
-    WB_ACK,     desc="Writeback Ack";
+    READ,       desc="Read";
+    WRITE,      desc="WRITE";
+    PUTC,       desc="PUTC";
+    PUTD,       desc="PUTD";
     INV,        desc="INValidate";
 }
 
@@ -25,15 +22,11 @@ structure(RequestMsg, desc="...", interface="Message") {
     MessageSizeType MessageSize,    desc="size category of the message";
 
     bool functionalRead(Packet *pkt) {
-      if (Type == CoherenceRequestType:PUTX) {
-          return testAndRead(addr, DataBlk, pkt);
-      }
-
-      return false;
+      error("Garnet_standalone does not support functional accesses!");
     }
 
     bool functionalWrite(Packet *pkt) {
-      return testAndWrite(addr, DataBlk, pkt);
+      error("Garnet_standalone does not support functional accesses!");
     }
 
 
@@ -42,19 +35,16 @@ structure(RequestMsg, desc="...", interface="Message") {
 structure(ResponseMsg, desc="...", interface="Message") {
     Addr addr,                      desc="Physical address for this response";
     CoherenceResponseType Type,     desc="Type of response (Ack, Data, etc)";
-    MachineID Sender,               desc="What component sent the data";
+    MachineID Requestor,            desc="What component sent the data";
     NetDest Destination,            desc="Node to whom the data is sent";
     DataBlock DataBlk,              desc="Data for the cache line";
     MessageSizeType MessageSize,    desc="size category of the message";
 
     bool functionalRead(Packet *pkt) {
-      if(Type == CoherenceResponseType:DATA) {
-        return testAndRead(addr, DataBlk, pkt);
-      }
-      return false;
+      error("Garnet_standalone does not support functional accesses!");
     }
 
     bool functionalWrite(Packet *pkt) {
-        return testAndWrite(addr, DataBlk, pkt);
+      error("Garnet_standalone does not support functional accesses!");
     }
 }

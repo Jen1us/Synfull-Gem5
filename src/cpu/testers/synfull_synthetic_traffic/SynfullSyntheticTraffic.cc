@@ -400,20 +400,27 @@ SynfullSyntheticTraffic::SynConvertToGar(InjectReqMsg& msg, MemCmd::Command& req
     unsigned size = msg.packetSize;
     if (msg.msgType == REQUEST) {
         switch (msg.coType) {
+            // LD
             case READ:
                 requestType = MemCmd::ReadReq;
                 break;
             case WRITE:
+                requestType = MemCmd::ReadReq;
+                break;
+            // ST
+            case PUTC:
+                // requestType = MemCmd::WriteLineReq;
                 requestType = MemCmd::WriteReq;
                 break;
-            case PUTC:
-                requestType = MemCmd::WriteLineReq;
+            case PUTD:
+                // requestType = MemCmd::WritebackDirty;
+                requestType = MemCmd::WriteReq;
                 break;
-            case PUTD: // ？
-                requestType = MemCmd::WritebackDirty;
-                break;
+            // IFETCH
             case INV:
-                requestType = MemCmd::InvalidateReq;
+                // requestType = MemCmd::InvalidateReq;
+                requestType = MemCmd::ReadReq;
+                flags.set(Request::INST_FETCH);
                 break;
             default:
                 panic("Unsupported coType %d in SynConvertToGar", msg.coType);
@@ -421,7 +428,7 @@ SynfullSyntheticTraffic::SynConvertToGar(InjectReqMsg& msg, MemCmd::Command& req
     } else if (msg.msgType == RESPONSE) {
         switch (msg.coType) {
             case DATA:
-                requestType = MemCmd::WriteResp;
+                requestType = MemCmd::ReadResp;
                 break;
             case ACK:
                 requestType = MemCmd::WriteCompleteResp;

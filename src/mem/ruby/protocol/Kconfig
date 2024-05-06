@@ -34,6 +34,7 @@ config PROTOCOL
     default "MOESI_CMP_token" if RUBY_PROTOCOL_MOESI_CMP_TOKEN
     default "MOESI_hammer" if RUBY_PROTOCOL_MOESI_HAMMER
     default "Garnet_standalone" if RUBY_PROTOCOL_GARNET_STANDALONE
+    default "Synfull_standalone" if RUBY_PROTOCOL_SYNFULL_STANDALONE
 
 cont_choice "Ruby protocol"
     config RUBY_PROTOCOL_GPU_VIPER
@@ -57,6 +58,8 @@ cont_choice "Ruby protocol"
         bool "MOESI hammer"
     config RUBY_PROTOCOL_GARNET_STANDALONE
         bool "Garnet standalone"
+    config RUBY_PROTOCOL_SYNFULL_STANDALONE
+        bool "Synfull standalone"
 endchoice
 
 rsource "chi/Kconfig"
